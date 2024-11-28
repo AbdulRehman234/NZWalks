@@ -1,4 +1,14 @@
 # Sensitive files
 appsettings.json
 .env
+.vs
+.csproj.user
+.suo
+.user
+bin
+obj
+.dll
+.exe
+.pdb
+
 

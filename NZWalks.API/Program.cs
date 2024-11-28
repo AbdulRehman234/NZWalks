@@ -14,8 +14,17 @@ using NZWalks.API.Interfaces.Image;
 using NZWalks.API.Repositories.ImageRepo;
 using Microsoft.Extensions.FileProviders;
 using NZWalks.API.Repositories.RegionDir;
+using Serilog;
+using NZWalks.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Add Serilog inside the Application 
+var logger = new LoggerConfiguration().WriteTo.Console().WriteTo.File("Logs/NzWalks_Log.txt",rollingInterval: RollingInterval.Minute).MinimumLevel.Information().CreateLogger();
+//now inject serilog logger inside builder 
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 
 // Add services to the container.
 
@@ -108,6 +117,7 @@ options.TokenValidationParameters = new TokenValidationParameters
 var app = builder.Build();
 
 // Configure the HTTP request pipeline. Keep Ordring For Middleware 
+app.UseMiddleware<GlobalExcaptionHandler>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

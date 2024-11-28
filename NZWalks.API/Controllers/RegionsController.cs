@@ -22,21 +22,31 @@ namespace NZWalks.API.Controllers
         private readonly IRegion _regionRepo;
 
         public IMapper _mapper { get; }
+        public ILogger<RegionsController> _logger { get; }
 
-        public RegionsController(IRegion region,IMapper mapper)
+        public RegionsController(IRegion region,IMapper mapper,ILogger<RegionsController> logger)
         {
             _regionRepo = region;
             _mapper = mapper;
+            _logger = logger;
         }
         [HttpGet]
         [Authorize(Roles = "READER")]
         public async Task<IActionResult> GetAll()
         {
-            var regionsDomain =await _regionRepo.GetAllAsync();
-            //Best Paractices is that return DTO instaed of Domain Modle
-            //Convert Region to RegionDTO Using AutoMapper
-            var regionDto = _mapper.Map<List<RegionDto>>(regionsDomain);
-            return Ok(regionDto);
+            try
+            {
+                var regionsDomain =await _regionRepo.GetAllAsync();
+                //Best Paractices is that return DTO instaed of Domain Modle
+                //Convert Region to RegionDTO Using AutoMapper
+                var regionDto = _mapper.Map<List<RegionDto>>(regionsDomain);
+                return Ok(regionDto);
+            }
+            catch (Exception ex) //ex catch all excaption which is create inside this function 
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
         }
         [HttpGet]
         [Route("{id:guid}")]

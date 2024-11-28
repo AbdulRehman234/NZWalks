@@ -1,1 +1,4 @@
+# Sensitive files
+appsettings.json
+.env
 
